@@ -19,6 +19,34 @@ class _CreateReminderScreenState extends ConsumerState<CreateReminderScreen> {
   DateTime? _selectedDate;
   TimeOfDay? _selectedTime;
 
+
+  void _saveReminder(BuildContext context, bool isDark) {
+    final title = _titleController.text;
+    final description = _descriptionController.text;
+    if (title.isEmpty || description.isEmpty || _selectedDate == null || _selectedTime == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Please fill in all fields'),
+          duration: Duration(seconds: 2),
+          backgroundColor: isDark ? Palette.darkColorScheme.error : Palette.lightColorScheme.error,
+        ),
+      );
+      return;
+    }
+
+    final newReminder = {
+      'title': title,
+      'description': description,
+      'priority': _selectedPriority,
+      'date': _selectedDate,
+      'time': _selectedTime,
+    };
+
+    ref.read(remindersProvider.notifier).update((state) => [...state, newReminder]);
+
+    Navigator.pop(context);
+  }
+
   @override
   Widget build(BuildContext context) {
     final isDarkMode = ref.watch(themeModeProvider);
@@ -187,7 +215,7 @@ class _CreateReminderScreenState extends ConsumerState<CreateReminderScreen> {
                   width: 170,
                   child: ElevatedButton(
                     onPressed: () {
-                      // Save reminder logic
+                      _saveReminder(context, isDarkMode);
                     },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: isDarkMode
