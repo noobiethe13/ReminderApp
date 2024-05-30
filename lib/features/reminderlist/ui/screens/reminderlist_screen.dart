@@ -3,56 +3,56 @@ import 'package:flutter/material.dart';
 import 'package:reminder_app/core/common/theme/palette.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../core/common/providers/global_providers.dart';
+import 'package:reminder_app/core/Navigator/app_navigator.dart';
 
-class ReminderListScreen extends StatelessWidget {
+class ReminderListScreen extends ConsumerStatefulWidget {
   const ReminderListScreen({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    return Consumer(
-      builder: (context, ref, child) {
-        final isDarkMode = ref.watch(themeModeProvider);
+  ConsumerState<ReminderListScreen> createState() => _ReminderListScreen();
+}
 
-        return Scaffold(
-          appBar: AppBar(
-            centerTitle: true,
-            title: Text(
-              'Your Reminders',
-              style: TextStyle(
-                fontWeight: FontWeight.w700,
-                fontSize: 25,
-                color: isDarkMode
-                    ? Palette.darkColorScheme.onPrimary
-                    : Palette.lightColorScheme.onPrimary,
-              ),
+class _ReminderListScreen extends ConsumerState<ReminderListScreen> {
+  @override
+  Widget build(BuildContext context) {
+    final isDarkMode = ref.watch(themeModeProvider);
+    return Scaffold(
+      appBar: AppBar(
+        automaticallyImplyLeading: false,
+        centerTitle: true,
+        title: Text(
+          'Your Reminders',
+          style: TextStyle(
+            fontWeight: FontWeight.w700,
+            fontSize: 25,
+            color: Palette.lightColorScheme.onPrimary,
+          ),
+        ),
+        actions: [
+          IconButton(
+            onPressed: () {
+              ref.read(themeModeProvider.notifier).state =
+              !ref.read(themeModeProvider);
+              },
+            icon: Icon(
+              isDarkMode ? CupertinoIcons.sun_max : CupertinoIcons.moon,
+              size: 25,
             ),
-            actions: [
-              IconButton(
-                onPressed: () {
-                  ref.read(themeModeProvider.notifier).state =
-                  !ref.read(themeModeProvider);
-                },
-                icon: Icon(
-                  isDarkMode ? CupertinoIcons.sun_max : CupertinoIcons.moon,
-                  size: 25,
-                ),
-              ),
-            ],
           ),
-          floatingActionButton: FloatingActionButton(
-            onPressed: () {},
-            child: Icon(CupertinoIcons.add, size: 25),
-            backgroundColor: isDarkMode
-                ? Palette.lightColorScheme.primary
-                : Palette.darkColorScheme.primary,
-            shape: CircleBorder(),
-          ),
-          floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
-          body: Column(
-            children: [],
-          ),
-        );
-      },
+        ],
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {AppNavigator.navigateToCreateReminderScreen(context);},
+        backgroundColor: isDarkMode
+            ? Palette.darkColorScheme.primary
+            : Palette.lightColorScheme.primary,
+        shape: const CircleBorder(),
+        child: const Icon(CupertinoIcons.add, size: 25),
+      ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
+      body: const Column(
+        children: [],
+      ),
     );
   }
 }
