@@ -3,11 +3,11 @@ import 'package:reminder_app/features/reminderlist/ui/screens/reminderlist_scree
 import '../../features/createreminder/ui/screens/createreminder_screen.dart';
 
 class AppNavigator{
-  static navigateToCreateReminderScreen(BuildContext context) {
+  static void navigateToCreateReminderScreen(BuildContext context, {Map<String, dynamic>? prefillData}) {
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (builder) => const CreateReminderScreen(),
+        builder: (context) => CreateReminderScreen(prefillData: prefillData),
       ),
     );
   }
