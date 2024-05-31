@@ -45,8 +45,7 @@ class _ReminderListScreen extends ConsumerState<ReminderListScreen> {
         actions: [
           IconButton(
             onPressed: () {
-              ref.read(themeModeProvider.notifier).state =
-              !ref.read(themeModeProvider);
+              ref.read(themeModeProvider.notifier).toggleThemeMode();
             },
             icon: Icon(
               isDarkMode ? CupertinoIcons.sun_max : CupertinoIcons.moon,
@@ -119,7 +118,7 @@ class _ReminderListScreen extends ConsumerState<ReminderListScreen> {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   IconButton(
-                    icon: Icon(Icons.edit),
+                    icon: const Icon(Icons.edit),
                     onPressed: () {
                       AppNavigator.navigateToCreateReminderScreen(
                         context,
@@ -129,13 +128,9 @@ class _ReminderListScreen extends ConsumerState<ReminderListScreen> {
                     color: isDarkMode ? Colors.black : Colors.white,
                   ),
                   IconButton(
-                    icon: Icon(Icons.delete),
+                    icon: const Icon(Icons.delete),
                     onPressed: () {
-                      setState(() {
-                        reminders.removeAt(index);
-                        ref.read(remindersProvider.notifier).state =
-                            reminders;
-                      });
+                      ref.read(remindersProvider.notifier).removeReminder(index);
                     },
                     color: isDarkMode ? Colors.black : Colors.white,
                   ),

@@ -3,9 +3,14 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:reminder_app/core/common/theme/palette.dart';
 import 'package:reminder_app/features/reminderlist/ui/screens/reminderlist_screen.dart';
 import 'core/common/providers/global_providers.dart';
+import 'core/services/notification_service.dart';
+import 'package:timezone/data/latest.dart' as tz;
 
 
 void main() {
+  WidgetsFlutterBinding.ensureInitialized();
+  tz.initializeTimeZones();
+  NotificationService().initialize();
   runApp(const ProviderScope(child: MyApp()));
 }
 

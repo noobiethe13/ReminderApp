@@ -33,35 +33,6 @@ class _CreateReminderScreenState extends ConsumerState<CreateReminderScreen> {
     }
   }
 
-  void _saveReminder() {
-    final title = _titleController.text;
-    final description = _descriptionController.text;
-    if (title.isEmpty || description.isEmpty || _selectedDate == null || _selectedTime == null) {
-      // You can show an error message here if you want
-      return;
-    }
-
-    final newReminder = {
-      'title': title,
-      'description': description,
-      'priority': _selectedPriority,
-      'date': _selectedDate,
-      'time': _selectedTime,
-    };
-
-    if (widget.prefillData != null) {
-      final reminders = ref.read(remindersProvider.notifier).state;
-      final index = reminders.indexOf(widget.prefillData!);
-      reminders[index] = newReminder;
-      ref.read(remindersProvider.notifier).state = List.from(reminders);
-    } else {
-      ref.read(remindersProvider.notifier).update((state) => [...state, newReminder]);
-    }
-
-    // Pop the screen after saving
-    Navigator.pop(context);
-  }
-
   @override
   Widget build(BuildContext context) {
     final isDarkMode = ref.watch(themeModeProvider);
@@ -81,7 +52,7 @@ class _CreateReminderScreenState extends ConsumerState<CreateReminderScreen> {
           onPressed: () {
             Navigator.pop(context);
           },
-          icon: Icon(
+          icon: const Icon(
             CupertinoIcons.multiply,
             size: 25,
           ),
@@ -92,40 +63,40 @@ class _CreateReminderScreenState extends ConsumerState<CreateReminderScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
+            const Text(
               "Add Title",
               style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
             ),
-            SizedBox(height: 8),
+            const SizedBox(height: 8),
             TextField(
               controller: _titleController,
-              decoration: InputDecoration(
+              decoration: const InputDecoration(
                 hintText: 'Enter title here',
                 border: OutlineInputBorder(),
               ),
             ),
-            SizedBox(height: 24),
-            Text(
+            const SizedBox(height: 24),
+            const Text(
               "Add Description",
               style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
             ),
-            SizedBox(height: 8),
+            const SizedBox(height: 8),
             TextField(
               controller: _descriptionController,
               maxLines: 4,
-              decoration: InputDecoration(
+              decoration: const InputDecoration(
                 hintText: 'Enter description here',
                 border: OutlineInputBorder(),
               ),
             ),
-            SizedBox(height: 24),
+            const SizedBox(height: 24),
             Row(
               children: [
-                Text(
+                const Text(
                   "Set Priority",
                   style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
                 ),
-                Spacer(),
+                const Spacer(),
                 DropdownButton<String>(
                   value: _selectedPriority,
                   onChanged: (String? newValue) {
@@ -143,17 +114,17 @@ class _CreateReminderScreenState extends ConsumerState<CreateReminderScreen> {
                 ),
               ],
             ),
-            SizedBox(height: 24),
-            Text(
+            const SizedBox(height: 24),
+            const Text(
               "Select Date",
               style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
             ),
-            SizedBox(height: 8),
+            const SizedBox(height: 8),
             Row(
               children: [
                 ElevatedButton.icon(
-                  icon: Icon(Icons.calendar_today, size: 24),
-                  label: Text(
+                  icon: const Icon(Icons.calendar_today, size: 24),
+                  label: const Text(
                     "Select Date",
                     style: TextStyle(fontSize: 16),
                   ),
@@ -171,29 +142,29 @@ class _CreateReminderScreenState extends ConsumerState<CreateReminderScreen> {
                     }
                   },
                   style: ElevatedButton.styleFrom(
-                    padding: EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+                    padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
                   ),
                 ),
-                Spacer(),
+                const Spacer(),
                 Text(
                   _selectedDate == null
                       ? 'No date chosen'
                       : DateFormat.yMMMd().format(_selectedDate!),
-                  style: TextStyle(fontSize: 16),
+                  style: const TextStyle(fontSize: 16),
                 ),
               ],
             ),
-            SizedBox(height: 24),
-            Text(
+            const SizedBox(height: 24),
+            const Text(
               "Set Time",
               style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
             ),
-            SizedBox(height: 8),
+            const SizedBox(height: 8),
             Row(
               children: [
                 ElevatedButton.icon(
-                  icon: Icon(Icons.access_time, size: 24),
-                  label: Text(
+                  icon: const Icon(Icons.access_time, size: 24),
+                  label: const Text(
                     "Select Time",
                     style: TextStyle(fontSize: 16),
                   ),
@@ -209,19 +180,19 @@ class _CreateReminderScreenState extends ConsumerState<CreateReminderScreen> {
                     }
                   },
                   style: ElevatedButton.styleFrom(
-                    padding: EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+                    padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
                   ),
                 ),
-                Spacer(),
+                const Spacer(),
                 Text(
                   _selectedTime == null
                       ? 'No time chosen'
                       : _selectedTime!.format(context),
-                  style: TextStyle(fontSize: 16),
+                  style: const TextStyle(fontSize: 16),
                 ),
               ],
             ),
-            SizedBox(height: 130),
+            const SizedBox(height: 130),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
@@ -229,18 +200,49 @@ class _CreateReminderScreenState extends ConsumerState<CreateReminderScreen> {
                   height: 50,
                   width: 170,
                   child: ElevatedButton(
-                    onPressed: _saveReminder,
-                    child: Text(
+                    onPressed: () {
+                      if (_titleController.text.isEmpty ||
+                          _descriptionController.text.isEmpty ||
+                          _selectedDate == null ||
+                          _selectedTime == null) {
+                        final snackBar = SnackBar(
+                          content: Text(
+                            'Please fill all fields!',
+                            style: TextStyle(color: isDarkMode ? Colors.white : Colors.black),
+                          ),
+                          backgroundColor: isDarkMode
+                              ? Palette.darkColorScheme.error
+                              : Palette.lightColorScheme.error,
+                        );
+                        ScaffoldMessenger.of(context).showSnackBar(snackBar);
+                      } else {
+                        Map<String, dynamic> newReminder = {
+                          'title': _titleController.text,
+                          'description': _descriptionController.text,
+                          'priority': _selectedPriority,
+                          'date': _selectedDate,
+                          'time': _selectedTime,
+                        };
+                        if (widget.prefillData != null) {
+                          int index = ref.read(remindersProvider).indexOf(widget.prefillData!);
+                          ref.read(remindersProvider.notifier).updateReminder(index, newReminder);
+                        } else {
+                          ref.read(remindersProvider.notifier).addReminder(newReminder);
+                        }
+                        Navigator.pop(context);
+                      }
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: isDarkMode
+                          ? Palette.darkColorScheme.primary
+                          : Palette.lightColorScheme.primary,
+                    ),
+                    child: const Text(
                       "Save Reminder",
                       style: TextStyle(
                           color: Colors.white,
                           fontSize: 16,
                           fontWeight: FontWeight.w500),
-                    ),
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: isDarkMode
-                          ? Palette.darkColorScheme.primary
-                          : Palette.lightColorScheme.primary,
                     ),
                   ),
                 ),
@@ -251,15 +253,15 @@ class _CreateReminderScreenState extends ConsumerState<CreateReminderScreen> {
                     onPressed: () {
                       Navigator.pop(context);
                     },
-                    child: Text(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Palette.lightColorScheme.onSecondary,
+                    ),
+                    child: const Text(
                       "Cancel",
                       style: TextStyle(
                           color: Colors.black,
                           fontSize: 16,
                           fontWeight: FontWeight.w500),
-                    ),
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Palette.lightColorScheme.onSecondary,
                     ),
                   ),
                 ),
